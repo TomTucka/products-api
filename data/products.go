@@ -3,35 +3,56 @@ package data
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"io"
+	"regexp"
 	"time"
 )
 
 // Product defines the structure for an API product
 type Product struct {
 	ID          int     `json:"id"`
-	Name        string  `json:"name"`
+	Name        string  `json:"name" validate:"required"`
 	Description string  `json:"description"`
-	Price       float32 `json:"price"`
-	SKU         string  `json:"sku"`
+	Price       float32 `json:"price" validate:"gt=0"`
+	SKU         string  `json:"sku" validate:"required,sku"`
 	CreatedOn   string  `json:"-"`
 	UpdatedOn   string  `json:"-"`
 	DeletedOn   string  `json:"-"`
 }
+
+// Structure
+func validateSKU(fl validator.FieldLevel) bool {
+	// sku format
+
+	re := regexp.MustCompile(`[a-z]+-[a-z]+-[a-z]+`)
+	matches := re.FindAllString(fl.Field().String(), -1)
+
+	if len(matches) != 1 {
+		return false
+	}
+
+	return true
+}
+
+
+func (p*Product)  Validate() error {
+	v := validator.New()
+	v.RegisterValidation("sku", validateSKU)
+	return v.Struct(p)
+}
+
+
+// Products is a collection of Product
+type Products []*Product
+
 
 func (p *Product) FromJSON(r io.Reader) error {
 	e := json.NewDecoder(r)
 	return e.Decode(p)
 }
 
-// Products is a collection of Product
-type Products []*Product
 
-// NewEncoder provides better performance than json.Unmarshal as it does not
-// have to buffer the output into an in memory slice of bytes
-// this reduces allocations and the overheads of the service
-//
-// https://golang.org/pkg/encoding/json/#NewEncoder
 func (p *Products) ToJSON(w io.Writer) error {
 	e := json.NewEncoder(w)
 	return e.Encode(p)
