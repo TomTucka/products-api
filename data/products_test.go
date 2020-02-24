@@ -2,11 +2,11 @@ package data
 
 import "testing"
 
-func TestCheckValidation(t *testing.T)  {
+func TestCheckValidation(t *testing.T) {
 	p := &Product{
-		Name: "coffee",
+		Name:  "coffee",
 		Price: 1.00,
-		SKU: "asb-asb-asb",
+		SKU:   "asb-asb-asb",
 	}
 
 	err := p.Validate()

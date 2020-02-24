@@ -35,23 +35,19 @@ func validateSKU(fl validator.FieldLevel) bool {
 	return true
 }
 
-
-func (p*Product)  Validate() error {
+func (p *Product) Validate() error {
 	v := validator.New()
 	v.RegisterValidation("sku", validateSKU)
 	return v.Struct(p)
 }
 
-
 // Products is a collection of Product
 type Products []*Product
-
 
 func (p *Product) FromJSON(r io.Reader) error {
 	e := json.NewDecoder(r)
 	return e.Decode(p)
 }
-
 
 func (p *Products) ToJSON(w io.Writer) error {
 	e := json.NewEncoder(w)
@@ -68,7 +64,7 @@ func AddProduct(p *Product) {
 	productList = append(productList, p)
 }
 
-func UpdateProduct(id int, p*Product) error {
+func UpdateProduct(id int, p *Product) error {
 	_, pos, err := findProduct(id)
 	if err != nil {
 		return err

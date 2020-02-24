@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-
 func main() {
 	// Create a Logger
 	l := log.New(os.Stdout, "product-api ", log.LstdFlags)
@@ -22,7 +21,7 @@ func main() {
 	//Create new serveMux and register the handlers
 	sm := mux.NewRouter()
 
-	getRouter  := sm.Methods(http.MethodGet).Subrouter()
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/", ph.GetProducts)
 
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
